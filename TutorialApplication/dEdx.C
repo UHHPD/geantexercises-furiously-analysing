@@ -1,5 +1,5 @@
 void dEdx()
-{
+{  
   const Int_t nev = 1000;
   const Double_t density = 8.960;//g cm3
   const Double_t mass = 0.1057;
@@ -9,10 +9,15 @@ void dEdx()
 
   TH1F* hloss = new TH1F("hloss","; -dE [MeV]",100,0,10);
   TGraph* gdEdx =  new TGraph();
-  double momentum = 1;
+  
+  double momentum = 0.001;
+  for (int a = 0; a < 12; ++a){
+    hloss->Reset();
+    momentum *= 3.162;
+
   for(int i = 0 ; i < nev ; ++i) {
     app->SetPrimaryMomentum(momentum);
-    //hprim->Reset();
+    
     app->RunMC(1,!i);
     //get energy deposited in our box
     double loss = app->depEinNode("/EXPH_1/CALB_1");
@@ -35,4 +40,5 @@ void dEdx()
   gdEdx->GetYaxis()->SetTitle("-dE/dx [MeV g^{-1} cm^{2}]");
   c2->Modified();
   c2->Update();
+}
 }
