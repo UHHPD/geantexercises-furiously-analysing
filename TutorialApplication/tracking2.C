@@ -94,12 +94,12 @@ public:
   
   void setCov(int i, int j, double c) { fCov(i,j) = c;}
   
-  double x(double lambda) const { return 0;}//needs changes
-  double z(double lambda) const { return 0;}//needs changes
+  double x(double lambda) const { return x0() + charge() * r() * sin(charge()* lambda + phi0());}
+  double z(double lambda) const { return z0() - charge() * r() * cos(charge()* lambda + phi0());}
   double y(double) const { return 0; }
-  
-  double lambdaFromX(double posx) const { //needs changes
-    return 0;
+ 
+  double lambdaFromX(double posx) const {
+    return  (asin( (posx - x0()) / (charge() * r()) ) - phi0() ) / charge();
   }
 
   static double B() {
@@ -144,7 +144,7 @@ unsigned char getSignal(const std::string& n)
   int c = app->depEinNode(n) * 600000;
   //if(c > 0) std::cout << "getSignal for " << n << " :" << c << std::endl;
   //add noise
-  c += gRandom->Gaus(0,3);
+  //c += gRandom->Gaus(0,3);
   //noise cut
   int noisecut = 15;
   if( c < noisecut ) return 0;
@@ -411,10 +411,10 @@ void tracking2()
   geom+=Bfield; geom.Append(")"); 
   app->InitMC(geom); 
 
-  bool doFit = false;
+  bool doFit = true;
 
   // define particle and control parameters of loop   
-  unsigned int nevt = 400 ;
+  unsigned int nevt = 1 ;
   double p = 1.0;
   app->SetPrimaryPDG(-13);    // +/-11: PDG code of e+/- 
   /* other PDG codes     22: Photon    +-13: muon   
